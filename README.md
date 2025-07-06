@@ -122,9 +122,10 @@ safespaceid-client/
 ### Entrepreneur Team
 - **Nyoman Widia Purnama Sari** – Team Leader  
 - **Baiq Hizanatul Ummah**
+- **Ginanjar Wisnu Alparizi**
 
 ### Developer Team
-- **Muhamad Raeachan Ulwan Zacky (F1D02310015)** – Front End Engineer  
+- **Muhamad Raeachan Ulwan Zacky** – Front End Engineer  
 - **Muhammad Kholilulloh** – Back End Engineer
 
 ---
