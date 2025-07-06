@@ -1,0 +1,26 @@
+[
+  {
+    "email": "kangaroo@mail.com",
+    "password": "123456",
+    "username": "Kangaroo12",
+    "createdAt": "2025-07-01T10:00:00Z"
+  },
+  {
+    "email": "koala@mail.com",
+    "password": "abcdef",
+    "username": "KoalaGirl",
+    "createdAt": "2025-07-02T11:30:00Z"
+  },
+  {
+    "email": "anjayani@gmail.com",
+    "password": "12345",
+    "username": "anjayani",
+    "createdAt": "2025-07-04T17:13:12.211Z"
+  },
+  {
+    "email": "usertesting@gmail.com",
+    "password": "12345",
+    "username": "usertesting",
+    "createdAt": "2025-07-06T01:16:10.015Z"
+  }
+]
