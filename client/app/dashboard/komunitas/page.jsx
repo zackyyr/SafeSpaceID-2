@@ -1,52 +1,54 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PostList from "@/components/common/PostList";
 import PostInputBar from "@/components/common/PostInputBar";
 import PostModalEditor from "@/components/common/PostModalEditor";
 import LoginModal from "@/components/auth/LoginModal";
 import useAuth from "@/app/hooks/useAuth";
-import defaultPosts from "@/app/data/DetailPost.json";
 
 const Komunitas = () => {
   const [showModal, setShowModal] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false); // ⬅️ State modal login
-  const [addedPosts, setAddedPosts] = useState([]);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [posts, setPosts] = useState([]);
 
-  const { isLoggedIn } = useAuth(); // ⬅️ Cek status login
+  const { isLoggedIn } = useAuth();
 
-  const handleNewPost = (newPost) => {
-    setAddedPosts((prev) => {
-      const updatedPosts = [newPost, ...prev];
-      localStorage.setItem("userPosts", JSON.stringify(updatedPosts));
-      return updatedPosts;
-    });
+  // Fetch all posts from API
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch("/api/posts");
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        // Sort from newest to oldest
+        const sorted = [...data].sort((a, b) => b.id - a.id);
+        setPosts(sorted);
+      }
+    } catch (err) {
+      console.error("Gagal ambil postingan:", err);
+    }
   };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const handleOpenModal = () => {
     if (isLoggedIn) {
       setShowModal(true);
     } else {
-      setShowLoginModal(true); // ⬅️ Tampilkan modal login jika belum login
+      setShowLoginModal(true);
     }
   };
-useEffect(() => {
-  const savedPosts = localStorage.getItem("userPosts");
-  if (savedPosts) {
-    setAddedPosts(JSON.parse(savedPosts));
-  }
-}, []);
-  // Ambil post default
-  const filteredDefaults = defaultPosts.filter(
-    (post) => post.id === 1 || post.id === 2
-  );
 
-  const allPosts = [...addedPosts, ...filteredDefaults];
+  const handleNewPost = () => {
+    fetchPosts(); // Refresh posts after submit
+  };
 
   return (
     <>
       <PostInputBar onOpenModal={handleOpenModal} />
-      <PostList posts={allPosts} />
+      <PostList posts={posts} />
 
       {showModal && (
         <PostModalEditor
@@ -56,7 +58,10 @@ useEffect(() => {
       )}
 
       {showLoginModal && (
-        <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
       )}
     </>
   );

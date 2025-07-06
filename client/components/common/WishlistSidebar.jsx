@@ -17,7 +17,10 @@ const sidebarVariants = {
 };
 
 const WishlistSidebar = ({ products, wishlist, onClose, onClickProduct }) => {
-  const wishlistedProducts = products.filter((_, i) => wishlist[i]);
+  // ✅ Fix logic filter berdasarkan product.id
+  const wishlistedProducts = products.filter((product) =>
+    wishlist.includes(product.id)
+  );
 
   return (
     <motion.div
@@ -66,9 +69,9 @@ const WishlistSidebar = ({ products, wishlist, onClose, onClickProduct }) => {
               Belum ada produk di wishlist.
             </p>
           ) : (
-            wishlistedProducts.map((product, i) => (
+            wishlistedProducts.map((product) => (
               <div
-                key={i}
+                key={product.id}
                 onClick={() => {
                   onClickProduct(product);
                   onClose();
@@ -77,7 +80,7 @@ const WishlistSidebar = ({ products, wishlist, onClose, onClickProduct }) => {
               >
                 <div className="w-16 h-16 bg-gray-100 rounded-lg relative overflow-hidden">
                   <Image
-                    src="/book.svg"
+                    src={product.cover || "/products/default.svg"}
                     alt={product.title}
                     fill
                     className="object-cover"

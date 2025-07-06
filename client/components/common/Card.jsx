@@ -7,13 +7,15 @@ const ProductCard = ({
   product,
   isWishlisted,
   onToggleWishlist,
-  index,
-  onClick, // buka modal produk
+  index, // sebenarnya ini productId
+  onClick,
 }) => {
+  const productId = index;
+
   return (
     <div
       onClick={onClick}
-      className="bg-white p-4 rounded-2xl cursor-pointer  hover:shadow-md transition"
+      className="bg-white p-4 rounded-2xl cursor-pointer hover:shadow-md transition"
     >
       {/* Gambar + Tombol Wishlist */}
       <div className="relative">
@@ -27,8 +29,8 @@ const ProductCard = ({
 
         <button
           onClick={(e) => {
-            e.stopPropagation(); // Hindari buka modal saat tombol diklik
-            onToggleWishlist(index);
+            e.stopPropagation();
+            onToggleWishlist(productId);
           }}
           className={`absolute top-2 right-2 p-1 rounded-full cursor-pointer transition ${
             isWishlisted ? "bg-red-100 text-red-500" : "bg-white text-gray-400"

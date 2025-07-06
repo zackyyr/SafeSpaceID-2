@@ -3,14 +3,17 @@
 import { X, ImagePlus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import useAuth from "@/app/hooks/useAuth";
 
-export default function PostModalEditor({ onClose, onSubmit }) {
+export default function PostModalEditor({ onClose }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [randomUsername, setRandomUsername] = useState("");
   const [randomAvatar, setRandomAvatar] = useState("/img/avatar-placeholder.png");
+
+  const { user } = useAuth();
 
   const entities = [
     "Enderman", "Creeper", "Foxie", "Bee", "Skeleton",
@@ -22,7 +25,6 @@ export default function PostModalEditor({ onClose, onSubmit }) {
     const serial1 = Math.floor(Math.random() * 100);
     const serial2 = Math.floor(Math.random() * 10);
     const randUsername = `${ent}${serial1}-${serial2}`;
-
     const randAvatarIndex = Math.floor(Math.random() * 9) + 1;
     const randAvatar = `/avatar/PP${randAvatarIndex}.png`;
 
@@ -41,34 +43,49 @@ export default function PostModalEditor({ onClose, onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const timestamp = Date.now();
+
     const newPost = {
-      id: Date.now(),
+      id: timestamp,
+      slug: title.toLowerCase().replace(/\s+/g, "-") + "-" + timestamp,
       author: randomUsername,
       avatar: randomAvatar,
-      time: "Baru aja",
+      time: new Date().toISOString(),
       title,
       content: [content],
-      views: "0",
-      comments: "0",
+      views: 0,
+      likes: 0,
+      comments: 0,
       image: imagePreview ? [imagePreview] : [],
+      ownerEmail: user?.email || "anon@example.com",
     };
 
-    if (typeof onSubmit === "function") {
-      onSubmit(newPost);
-    }
+    try {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newPost),
+      });
 
-    onClose();
+      if (res.ok) {
+        onClose(); // ✅ Biarkan state post disegarkan dari useEffect di komponen utama
+      } else {
+        console.error("Gagal menyimpan post");
+      }
+    } catch (err) {
+      console.error("POST ERROR:", err);
+    }
   };
 
   useEffect(() => {
-  // Disable scroll ketika modal muncul
-  document.body.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
 
-  return () => {
-    // Balikin scroll lagi saat modal ditutup
-    document.body.style.overflow = "auto";
-  };
-}, []);
   return (
     <AnimatePresence>
       <motion.div
@@ -100,7 +117,6 @@ export default function PostModalEditor({ onClose, onSubmit }) {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            {/* Anon user + Upload */}
             <div className="flex items-center gap-3">
               <img
                 src={randomAvatar}
@@ -111,7 +127,6 @@ export default function PostModalEditor({ onClose, onSubmit }) {
                 <p className="text-xs text-gray-500">Username mu akan menjadi :</p>
                 <p className="text-sm font-semibold">{randomUsername}</p>
               </div>
-
               <label className="cursor-pointer ml-auto text-blue-600 flex items-center text-sm gap-1">
                 <ImagePlus size={16} />
                 Berikan Gambar
@@ -124,7 +139,6 @@ export default function PostModalEditor({ onClose, onSubmit }) {
               </label>
             </div>
 
-            {/* Preview */}
             {imagePreview && (
               <img
                 src={imagePreview}
@@ -133,7 +147,6 @@ export default function PostModalEditor({ onClose, onSubmit }) {
               />
             )}
 
-            {/* Judul */}
             <div className="relative">
               <input
                 type="text"
@@ -148,7 +161,6 @@ export default function PostModalEditor({ onClose, onSubmit }) {
               </span>
             </div>
 
-            {/* Konten */}
             <textarea
               rows={5}
               placeholder="Mau cerita apa hari ini?"

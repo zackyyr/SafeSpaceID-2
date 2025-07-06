@@ -31,9 +31,11 @@ export async function GET() {
       isLoggedIn: true,
       user: {
         email: user.email,
-        username: user.username, // ← ini yang kamu pakai di UI
+        username: user.username,
+        wishlist: user.wishlist || [], // ✅ tambahkan ini!
       },
     });
+
   } catch (error) {
     console.error("ME ENDPOINT ERROR:", error);
     return NextResponse.json(

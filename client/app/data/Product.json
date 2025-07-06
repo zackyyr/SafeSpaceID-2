@@ -1,5 +1,6 @@
 [
   {
+    "id": "product-001",
     "title": "Belajar Berkata Tidak Tanpa Rasa Bersalah",
     "rating": 4.7,
     "reviewCount": 189,
@@ -22,6 +23,7 @@
     ]
   },
   {
+     "id": "product-002",
     "title": "InnerVoice : Merawat Luka yang Tak Terlihat",
     "rating": 4.8,
     "reviewCount": 238,
@@ -45,6 +47,7 @@
     ]
   },
   {
+     "id": "product-003",
     "title": "Self-Compassion untuk Pemula",
     "rating": 4.9,
     "reviewCount": 321,
@@ -65,6 +68,7 @@
     ]
   },
   {
+     "id": "product-004",
     "title": "10 Langkah Menjaga Diri di Dunia Digital",
     "rating": 4.6,
     "reviewCount": 817,
@@ -86,6 +90,7 @@
     ]
   },
   {
+    "id": "product-005",
     "title": "Melepas Rasa Bersalah yang Bukan Milikku",
     "rating": 4.8,
     "reviewCount": 176,
@@ -106,6 +111,7 @@
     ]
   },
   {
+     "id": "product-006",
     "title": "Saat Dunia Tidak Mendengarkanmu",
     "rating": 4.5,
     "reviewCount": 104,
@@ -126,6 +132,7 @@
     ]
   },
   {
+     "id": "product-007",
     "title": "Jangan Salahkan Diri Sendiri (Lagi)",
     "rating": 4.7,
     "reviewCount": 216,
@@ -145,6 +152,7 @@
     ]
   },
   {
+    "id": "product-008", 
     "title": "Healing Itu Bukan Lomba",
     "rating": 4.9,
     "reviewCount": 389,

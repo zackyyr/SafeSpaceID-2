@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import products from "@/app/data/Product.json";
@@ -15,11 +15,14 @@ import ShopHeader from "@/components/common/ShopHeader";
 
 import { useScrollLock } from "@/app/hooks/useScrollLock";
 import { useFilterProducts } from "@/app/hooks/useFilterProducts";
+import useAuth from "@/app/hooks/useAuth";
 
 const Shop = () => {
+  const { isLoggedIn, user } = useAuth();
+
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("Terbaru");
-  const [wishlist, setWishlist] = useState({});
+  const [wishlist, setWishlist] = useState([]);
   const [showWishlist, setShowWishlist] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [filters, setFilters] = useState({
@@ -30,11 +33,54 @@ const Shop = () => {
 
   useScrollLock(selectedProduct || showWishlist);
 
-  const toggleWishlist = (index) => {
-    setWishlist((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (!isLoggedIn || !user?.email) return;
+
+      try {
+        const res = await fetch("/api/auth/me");
+        const data = await res.json();
+        setWishlist(data?.user?.wishlist || []);
+      } catch (err) {
+        console.error("Gagal fetch wishlist:", err);
+      }
+    };
+
+    fetchWishlist();
+  }, [isLoggedIn, user]); // 🔥 tambahkan dependency ini
+
+
+  const toggleWishlist = async (productId) => {
+    if (!isLoggedIn || !user?.email) {
+      alert("Kamu harus login untuk menyimpan wishlist!");
+      return;
+    }
+
+    const isWishlisted = wishlist.includes(productId);
+
+    // Update UI langsung
+    setWishlist((prev) =>
+      isWishlisted
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
+    );
+
+    // Kirim ke backend
+    try {
+      await fetch("/api/wishlist", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: user.email,
+          productId,
+          action: isWishlisted ? "remove" : "add",
+        }),
+      });
+    } catch (err) {
+      console.error("Gagal update wishlist:", err);
+    }
   };
 
   const handleCheckboxChange = (type, value) => {
@@ -64,17 +110,14 @@ const Shop = () => {
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div className="flex flex-col md:flex-row gap-10">
-        {/* Sidebar */}
         <ProductSidebarFilter
           filters={filters}
           handleCheckboxChange={handleCheckboxChange}
         />
 
-        {/* Main Content */}
         <section className="flex-1">
           <ShopHeader onOpenWishlist={() => setShowWishlist(true)} />
 
-          {/* Filter Tabs + Search */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 bg-white p-3 rounded-2xl">
             <FilterTab
               activeFilter={activeFilter}
@@ -83,15 +126,13 @@ const Shop = () => {
             <ProductSearch query={query} setQuery={setQuery} />
           </div>
 
-          {/* Product Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            {filteredProducts.map((product, index) => (
+            {filteredProducts.map((product) => (
               <ProductCard
-                key={index}
+                key={product.id}
                 product={product}
-                index={index}
-                isWishlisted={wishlist[index]}
+                index={product.id}
+                isWishlisted={wishlist.includes(product.id)}
                 onToggleWishlist={toggleWishlist}
                 onClick={() => setSelectedProduct(product)}
               />
@@ -100,7 +141,6 @@ const Shop = () => {
         </section>
       </div>
 
-      {/* Product Modal */}
       <AnimatePresence>
         {selectedProduct && (
           <ProductModal
@@ -111,7 +151,6 @@ const Shop = () => {
         )}
       </AnimatePresence>
 
-      {/* Wishlist Sidebar */}
       <AnimatePresence>
         {showWishlist && (
           <WishlistSidebar
