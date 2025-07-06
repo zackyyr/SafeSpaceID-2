@@ -27,7 +27,10 @@
     "username": "anjayani",
     "createdAt": "2025-07-04T17:13:12.211Z",
     "savedPosts": [
-      "post123"
+      "post123",
+      "ini-akun-anjayani-1751770753139",
+      "ini-akun-usertesting-1751771361906",
+      "halo-nama-syaa-usertesting-1751771672721"
     ],
     "wishlist": [
       "product-001",
@@ -39,7 +42,9 @@
     "password": "12345",
     "username": "usertesting",
     "createdAt": "2025-07-06T01:16:10.015Z",
-    "savedPosts": [],
+    "savedPosts": [
+      "ini-akun-anjayani-1751771229340"
+    ],
     "wishlist": [
       "product-001",
       "product-008",

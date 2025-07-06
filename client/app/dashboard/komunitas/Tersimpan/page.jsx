@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Heart, MessageCircle, BookmarkX } from "lucide-react";
 import ConfirmDeleteModal from "@/components/common/ConfirmDeteleModal";
+import useAuth from "@/app/hooks/useAuth";
 
 const formatDate = (isoDateOrFake) => {
   const date = new Date(isoDateOrFake);
@@ -17,23 +18,59 @@ const formatDate = (isoDateOrFake) => {
 const Tersimpan = () => {
   const [savedPosts, setSavedPosts] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [selectedPostSlug, setSelectedPostSlug] = useState(null);
+
+  const { user, isLoggedIn } = useAuth();
+
+  // Fetch saved posts dari API
+  const fetchSavedPosts = async () => {
+    if (!isLoggedIn || !user?.email) return;
+
+    try {
+      const res = await fetch("/api/posts/saved", {
+        method: "POST",
+        body: JSON.stringify({ userEmail: user.email }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setSavedPosts(data);
+      }
+    } catch (err) {
+      console.error("Gagal ambil postingan tersimpan:", err);
+    }
+  };
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("savedPosts")) || [];
-    setSavedPosts(saved);
-  }, []);
+    fetchSavedPosts();
+  }, [user]);
 
-  const handleDelete = (id) => {
-    setSelectedPostId(id);
+  const handleDelete = (slug) => {
+    setSelectedPostSlug(slug);
     setShowModal(true);
   };
 
-  const confirmDelete = () => {
-    const updated = savedPosts.filter((post) => post.id !== selectedPostId);
-    localStorage.setItem("savedPosts", JSON.stringify(updated));
-    setSavedPosts(updated);
-    setShowModal(false);
+  const confirmDelete = async () => {
+    if (!user?.email || !selectedPostSlug) return;
+
+    try {
+      const res = await fetch("/api/posts/unsave", {
+        method: "POST",
+        body: JSON.stringify({
+          postSlug: selectedPostSlug,
+          userEmail: user.email,
+        }),
+      });
+
+      if (res.ok) {
+        setSavedPosts((prev) =>
+          prev.filter((post) => post.slug !== selectedPostSlug)
+        );
+        setShowModal(false);
+      }
+    } catch (err) {
+      console.error("Gagal hapus post tersimpan:", err);
+    }
   };
 
   return (
@@ -42,7 +79,7 @@ const Tersimpan = () => {
 
       {savedPosts.length > 0 ? (
         savedPosts.map((post) => (
-          <Link key={post.id} href={`/dashboard/komunitas/detail/${post.slug}`}>
+          <Link key={post.slug} href={`/dashboard/komunitas/detail/${post.slug}`}>
             <div className="bg-white shadow-sm rounded-xl p-4 flex items-start mb-3 justify-between gap-4 hover:bg-gray-50 transition cursor-pointer">
               {/* Kiri */}
               <div className="flex-1">
@@ -74,13 +111,13 @@ const Tersimpan = () => {
                   </div>
                   <div className="flex items-center gap-1">
                     <MessageCircle size={16} />
-                    {post.comments}
+                    {post.comments || 0}
                   </div>
                   <div
                     className="flex items-center gap-1 hover:text-red-500 cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleDelete(post.id);
+                      handleDelete(post.slug);
                     }}
                   >
                     <BookmarkX size={16} />
@@ -89,7 +126,7 @@ const Tersimpan = () => {
                 </div>
               </div>
 
-              {/* Kanan */}
+              {/* Gambar */}
               {post.image?.length > 0 && (
                 <div className="w-[100px] h-[100px] flex-shrink-0">
                   <img

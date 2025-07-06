@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 
+import postsData from "@/app/data/Posts.json"; // ✅ IMPORT JSON
 import PostActions from "@/components/common/PostActions";
 import BackButton from "@/components/common/BackButton";
 import CommentSection from "@/components/common/CommentSection";
@@ -24,22 +25,35 @@ export default function PostDetailPage() {
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const res = await fetch("/api/posts");
-        const data = await res.json();
-        const allPosts = Array.isArray(data) ? data : data.posts || [];
+    const found = postsData.find((p) => p.slug === slug);
+    if (found) {
+      setPost(found);
 
-        const found = allPosts.find((p) => p.slug === slug);
-        setPost(found || null);
-      } catch (err) {
-        console.error("Gagal memuat post detail:", err);
-        setPost(null);
-      }
-    };
-
-    fetchPost();
+      // Cek apakah sudah disimpan
+      const saved = JSON.parse(localStorage.getItem("savedPosts")) || [];
+      const alreadySaved = saved.some((p) => p.id === found.id);
+      setIsSaved(alreadySaved);
+    }
   }, [slug]);
+
+const handleSave = async () => {
+  try {
+    const res = await fetch("/api/posts/save", {
+      method: "POST",
+      body: JSON.stringify({ postId: post.id, userEmail: user.email }),
+    });
+
+    if (res.ok) {
+      setIsSaved(true);
+      alert("Postingan berhasil disimpan!");
+    } else {
+      alert("Gagal menyimpan post.");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   if (!post) {
     return (
@@ -93,12 +107,14 @@ export default function PostDetailPage() {
           </div>
         )}
 
+        {/* Konten Post */}
         <div className="text-gray-800 text-base space-y-4 mb-6">
           {post.content.map((item, i) => (
             <div key={i} dangerouslySetInnerHTML={{ __html: item }} />
           ))}
         </div>
 
+        {/* Actions */}
         <div className="flex items-center gap-6 text-sm text-gray-600 mb-6">
           <div className="flex items-center gap-1">
             <Eye size={16} />
@@ -106,7 +122,7 @@ export default function PostDetailPage() {
           </div>
 
           <button
-            onClick={() => setIsSaved(!isSaved)}
+            onClick={handleSave}
             className={`cursor-pointer flex items-center gap-1 transition ${
               isSaved ? "text-pink-500 font-medium" : "hover:text-pink-500"
             }`}

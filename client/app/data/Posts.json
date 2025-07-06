@@ -28,7 +28,8 @@
       "/post/id-1/pic-1.png",
       "/post/id-1/pic-2.png"
     ],
-    "ownerEmail": "public@example.com"
+    "ownerEmail": "public@example.com",
+    "savedBy": []
   },
   {
     "id": 1002,
@@ -57,22 +58,7 @@
     "image": [
       "/post/id-2/pic.png"
     ],
-    "ownerEmail": "public@example.com"
-  },
-  {
-    "id": 1751769463222,
-    "slug": "testing-anjayani-1751769463222",
-    "author": "Creeper68-7",
-    "avatar": "/avatar/PP1.png",
-    "time": "2025-07-06T02:37:43.222Z",
-    "title": "testing anjayani",
-    "content": [
-      "1234"
-    ],
-    "views": 0,
-    "likes": 0,
-    "comments": 0,
-    "image": [],
-    "ownerEmail": "anjayani@gmail.com"
+    "ownerEmail": "public@example.com",
+    "savedBy": []
   }
 ]

@@ -3,27 +3,59 @@
 import { useEffect, useState } from "react";
 import { MessageCircle, Bookmark } from "lucide-react";
 import Link from "next/link";
+import useAuth from "@/app/hooks/useAuth";
 
 export default function PostItem({ post }) {
+  const { user, isLoggedIn } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
 
+  // Cek apakah post sudah disimpan user
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("savedPosts")) || [];
-    const alreadySaved = saved.some((item) => item.id === post.id);
-    setIsSaved(alreadySaved);
-  }, [post.id]);
+    const checkSavedStatus = async () => {
+      if (!isLoggedIn || !user?.email) return;
 
-  const handleSaveToggle = (e) => {
-    e.preventDefault(); // hindari klik ke detail
-    const saved = JSON.parse(localStorage.getItem("savedPosts")) || [];
+      try {
+        const res = await fetch("/api/posts/saved", {
+          method: "POST",
+          body: JSON.stringify({ userEmail: user.email }),
+        });
 
-    if (isSaved) {
-      const updated = saved.filter((item) => item.id !== post.id);
-      localStorage.setItem("savedPosts", JSON.stringify(updated));
-      setIsSaved(false);
-    } else {
-      localStorage.setItem("savedPosts", JSON.stringify([post, ...saved]));
-      setIsSaved(true);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const found = data.find((item) => item.slug === post.slug);
+          setIsSaved(!!found);
+        }
+      } catch (err) {
+        console.error("Gagal cek status simpan:", err);
+      }
+    };
+
+    checkSavedStatus();
+  }, [post.slug, user]);
+
+  // Simpan / Unsave post
+  const handleSaveToggle = async (e) => {
+    e.preventDefault();
+
+    if (!isLoggedIn || !user?.email) {
+      alert("Silakan login untuk menyimpan postingan.");
+      return;
+    }
+
+    try {
+      const endpoint = isSaved ? "/api/posts/unsave" : "/api/posts/save";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        body: JSON.stringify({ postSlug: post.slug, userEmail: user.email }),
+      });
+
+      if (res.ok) {
+        setIsSaved(!isSaved);
+      } else {
+        console.error("Gagal simpan/unsave post");
+      }
+    } catch (err) {
+      console.error("Error simpan/unsave:", err);
     }
   };
 
@@ -42,7 +74,13 @@ export default function PostItem({ post }) {
           />
           <span className="font-semibold text-gray-600">{post.author}</span>
         </div>
-        <span className="text-xs">{post.time}</span>
+       <span className="text-xs">
+        {new Date(post.time).toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        })}
+      </span>
       </div>
 
       {/* Konten Klik */}
@@ -78,10 +116,10 @@ export default function PostItem({ post }) {
       </Link>
 
       {/* Aksi */}
-      <div className="flex items-center gap-4 text-sm text-gray-600">
+      <div className="flex items-center gap-4 text-sm text-gray-600 mt-2">
         <button className="flex items-center gap-1 hover:text-blue-600">
           <MessageCircle size={16} />
-          {post.comments} Balasan
+          {post.comments || 0} Balasan
         </button>
         <button
           className={`cursor-pointer flex items-center gap-1 ${
