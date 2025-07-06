@@ -12,6 +12,7 @@ import WishlistSidebar from "@/components/common/WishlistSidebar";
 import FilterTab from "@/components/common/FilterTab";
 import ProductSearch from "@/components/common/ProductSearch";
 import ShopHeader from "@/components/common/ShopHeader";
+import ProductPromoCarousel from "@/components/common/ProductPromo";
 
 import { useScrollLock } from "@/app/hooks/useScrollLock";
 import { useFilterProducts } from "@/app/hooks/useFilterProducts";
@@ -94,21 +95,23 @@ const Shop = () => {
       return { ...prev, [type]: Array.from(current) };
     });
   };
-
   const filteredProducts = useFilterProducts(
-    products,
+    products.filter((p) => !["banner-1", "banner-2"].includes(p.id)), // 🧼 exclude banner
     query,
     filters,
     activeFilter
   );
 
+
   return (
+    
     <motion.div
       className="min-h-screen px-4 sm:px-10 py-10"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
+      <ProductPromoCarousel onClickProduct={setSelectedProduct} />
       <div className="flex flex-col md:flex-row gap-10">
         <ProductSidebarFilter
           filters={filters}
@@ -116,6 +119,7 @@ const Shop = () => {
         />
 
         <section className="flex-1">
+  
           <ShopHeader onOpenWishlist={() => setShowWishlist(true)} />
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 bg-white p-3 rounded-2xl">
@@ -140,7 +144,6 @@ const Shop = () => {
           </div>
         </section>
       </div>
-
       <AnimatePresence>
         {selectedProduct && (
           <ProductModal

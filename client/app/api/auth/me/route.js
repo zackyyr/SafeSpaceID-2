@@ -4,7 +4,7 @@ import users from "@/app/data/Users.json";
 
 export async function GET() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get("token");
 
     if (!token) {

@@ -10,7 +10,7 @@ const filterSections = [
   {
     title: "Format",
     type: "format",
-    options: ["PDF", "Notion Template", "Google Docs"],
+    options: ["PDF", "Notion Template", "Google Docs", "Video"],
   },
   {
     title: "Harga",

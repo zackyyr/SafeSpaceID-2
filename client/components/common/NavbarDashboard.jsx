@@ -75,7 +75,7 @@ const NavbarDashboard = () => {
               <button className="w-9 h-9 flex items-center justify-center bg-[#F9F9F9] rounded-full">
                 <NotificationDropdown />
               </button>
-              <UserDropdown username="Kangaroo12" />
+              <UserDropdown />
             </>
           ) : (
             <button

@@ -1,9 +1,13 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { ArrowLeft } from "lucide-react"; // <- ini yang belum kamu tambahkan
 
 const ComingSoon = () => {
+  const router = useRouter();
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center relative px-4 sm:px-6"
@@ -25,7 +29,7 @@ const ComingSoon = () => {
           transition={{ duration: 0.5 }}
         >
           <Image
-            src="/logo.jpg" // pastikan ini ada di folder /public
+            src="/logo.jpg"
             alt="SafeSpaceID Logo"
             width={80}
             height={80}
@@ -57,21 +61,22 @@ const ComingSoon = () => {
           <br />
           Makasih udah sabar nunggu, ya 🤍
         </motion.p>
+        {/* Tombol Kembali */}
+        <motion.button
+          onClick={() => router.push("/")}
+          className="cursor-pointer mt-4 px-6 py-2 bg-white text-[#2875D4] rounded-full font-medium hover:bg-[#2875D4] hover:text-white transition flex items-center gap-2 group mx-auto"
 
-        {/* Progress bar */}
-        <motion.div
-          className="w-full bg-white/20 h-6 rounded-full overflow-hidden mb-6 border border-white/40"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
         >
-          <div
-            className="h-full bg-white text-blue-800 text-xs font-semibold flex items-center justify-end pr-3 rounded-full"
-            style={{ width: "87%" }}
+          <motion.span
+            className="group-hover:-translate-x-1 transition-transform duration-300"
           >
-            87%
-          </div>
-        </motion.div>
+            <ArrowLeft size={18} />
+          </motion.span>
+          Kembali ke Halaman Utama
+        </motion.button>
       </div>
     </div>
   );
