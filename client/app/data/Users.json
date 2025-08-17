@@ -30,7 +30,11 @@
       "post123",
       "ini-akun-anjayani-1751770753139",
       "ini-akun-usertesting-1751771361906",
-      "halo-nama-syaa-usertesting-1751771672721"
+      "halo-nama-syaa-usertesting-1751771672721",
+      "kenapa-sulit-bilang-nggak",
+      "aku-lelah-bersosialisasi",
+      "aku-kangen-diri-sendiri",
+      "aku-lebih-bisa-nangis-daripada-curhat"
     ],
     "wishlist": [
       "product-001",
@@ -44,12 +48,20 @@
     "createdAt": "2025-07-06T01:16:10.015Z",
     "savedPosts": [
       "ini-akun-anjayani-1751771229340",
-      "hi-this-is-anjayani-1751772073537"
+      "hi-this-is-anjayani-1751772073537",
+      "memaafkan-diri-sendiri-bukan-berarti-menyerah",
+      "kenapa-sulit-bilang-nggak"
     ],
     "wishlist": [
       "product-001",
       "product-008",
       "product-004"
     ]
+  },
+  {
+    "email": "user@gmail.com",
+    "password": "12345",
+    "username": "user",
+    "createdAt": "2025-07-11T07:27:58.236Z"
   }
 ]

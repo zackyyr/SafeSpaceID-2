@@ -61,7 +61,7 @@
     "ownerEmail": "public@example.com",
     "savedBy": []
   },
-   {
+  {
     "id": 1103,
     "slug": "aku-kangen-diri-sendiri",
     "author": "Enderman28-4",
@@ -164,7 +164,7 @@
     "ownerEmail": "anjayani@gmail.com",
     "savedBy": []
   },
-   {
+  {
     "id": 1003,
     "slug": "aku-mulai-menyalahkan-diri-sendiri",
     "author": "Axolotl63-3",
@@ -201,7 +201,9 @@
     "views": 1350,
     "likes": 0,
     "comments": 33,
-    "image": ["/post/id-4/pic.png"],
+    "image": [
+      "/post/id-4/pic.png"
+    ],
     "ownerEmail": "anjayani@gmail.com",
     "savedBy": []
   },
